@@ -6,6 +6,10 @@
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 [![Launch on Nextflow Tower](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Nextflow%20Tower-%234256e7)](https://tower.nf/launch?pipeline=https://github.com/mskcc/tempo)
 
+## Branch: soccin/tempo/dev/fmap
+
+This branch uses the lastest code from mskcc/tempo/nf-core/markdup_bqsr along with additional fixes.
+
 ## Introduction
 
 # Time-Efficient Mutational Profiling in Oncology (Tempo)

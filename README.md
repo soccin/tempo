@@ -12,6 +12,8 @@ This branch uses the lastest code from mskcc/tempo/nf-core/markdup_bqsr along wi
 
 - Update to nf-core modules to fix space (over copying) issues: (https://github.com/nf-core/modules/issues/7792). `nf-core modules update gatk4spark/applybqsr`
 
+- Update delly from tempo team: (https://github.com/mskcc/tempo/compare/develop...feature/upgrade_delly_v126?expand=1)
+
 ## Introduction
 
 # Time-Efficient Mutational Profiling in Oncology (Tempo)

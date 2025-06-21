@@ -14,6 +14,8 @@ This branch uses the lastest code from mskcc/tempo/nf-core/markdup_bqsr along wi
 
 - Update delly from tempo team: (https://github.com/mskcc/tempo/compare/develop...feature/upgrade_delly_v126?expand=1)
 
+- Update svaba from tempo team: (https://github.com/mskcc/tempo/pull/1018/files)
+
 ## Introduction
 
 # Time-Efficient Mutational Profiling in Oncology (Tempo)

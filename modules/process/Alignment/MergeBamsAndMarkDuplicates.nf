@@ -38,7 +38,7 @@ process MergeBamsAndMarkDuplicates {
   gatk MarkDuplicates \
     ${javaOptions} \
     --TMP_DIR ./ \
-    --MAX_RECORDS_IN_RAM 50000 \
+    --MAX_RECORDS_IN_RAM ${params.max_records_in_ram} \
     --INPUT ${idSample}.merged.bam \
     --METRICS_FILE ${idSample}.bam.metrics \
     --ASSUME_SORT_ORDER coordinate \

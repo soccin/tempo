@@ -45,15 +45,18 @@ process AlignReads {
   // minimum total task memory requirment is 6GB because `bwa mem` need this much to run, and increase by 10% everytime retry
       task.memory = { (6 / memMultiplier * (0.9 + 0.1 * task.attempt) + 0.5).round() + " GB" }
       mem = (5.4 * 1024 / task.cpus).round()
+      memBlock="memBlock1"
   }
   else if ( mem / memDivider * (1 + 0.1 * task.attempt) > originalMem.toMega() ) {
   // if file size is too big, use task.memory as the max mem for this task, and decrease -M for `samtools sort` by 10% everytime retry
       mem = (originalMem.toMega() / memDivider * (1 - 0.1 * task.attempt) + 0.5).round()
+      memBlock="memBlock2"
   }
   else {
   // normal situation, `samtools sort` -M = inputSize * 2, task.memory is 110% of `samtools sort` and increase by 10% everytime retry
       task.memory = { (mem * memDivider * (1 + 0.1 * task.attempt) / 1024 + 0.5).round() + " GB" }
       mem = mem
+      memBlock="memBlock3"
   }
 
   task.memory = task.memory.toGiga() < 1 ? { 1.GB } : task.memory
@@ -65,6 +68,9 @@ process AlignReads {
   touch `zcat $fastqFile1 | head -1 | tr ':/\t ' '@' | cut -d '@' -f2-`.readId
   set -e
   set -o pipefail
+
+  echo "memBlock: ${memBlock}"
+  echo "inputSize: ${inputSize}"
 
   fastq1=${fastqFile1}
   fastq2=${fastqFile2}

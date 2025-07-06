@@ -22,7 +22,15 @@ process QcQualimap {
     nr = 500
     nw = 300
   }
-  availMem = task.cpus * task.memory.toString().split(" ")[0].toInteger()
+
+  //
+  // This is a very bad idea should not be scaling memory here
+  // job will not get assigned the correct value
+  //
+  // availMem = task.cpus * task.memory.toString().split(" ")[0].toInteger()
+  //
+  availMem = task.memory.toString().split(" ")[0].toInteger()
+
   // javaMem = availMem > 20 ? availMem - 4 : ( availMem > 10 ? availMem - 2 : ( availMem > 1 ? availMem - 1 : 1 ))
   javaMem = availMem > 20 ? (availMem * 0.75).round() : ( availMem > 1 ? availMem - 1 : 1 )
   if (workflow.profile == "juno") {
@@ -42,7 +50,7 @@ process QcQualimap {
   -bam ${bam} \
   ${gffOptions} \
   -outdir ${idSample} \
-  -nt ${ task.cpus * 2 } \
+  -nt ${ task.cpus } \
   -nw ${nw} \
   -nr ${nr} \
   --java-mem-size=${javaMem}G

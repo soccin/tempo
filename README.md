@@ -1,7 +1,7 @@
 
 # Time-Efficient Mutational Profiling in Oncology (Tempo)
 
-## Eos branch (2025-07-04)
+## Eos-devs branch (2025-07-06)
 
 Forked from mskcc/tempo develop (e136e56)
 

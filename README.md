@@ -5,6 +5,16 @@
 
 Forked from mskcc/tempo develop (e136e56)
 
+### Updates 2025-07-10 (Branch: eos-devs)
+
+The eos-devs branch has changes to optimize for WGS processing and some Iris cluster specific changes. Key enhancements include conditional execution of LoH and SNV processes for exome samples to prevent slow processing on large WGS datasets, comprehensive memory allocation optimizations across QC and alignment processes, and improved BAM processing workflows with standardized memory parameters. The branch also addresses critical bug fixes for BAM mapping conditions and IRIS-specific memory allocation issues. See CHANGELOG.md for details.
+
+**Summary of changes:**
+• **Performance Optimization**: Added exome-only conditions for LoH/SNV processes to prevent unnecessary slow execution on WGS samples
+• **Memory Management**: Refactored memory allocation in QcQualimap and enhanced BAM processing with standardized memory parameters
+• **Bug Fixes**: Fixed BAM mapping condition handling in QcPileup and added debugging for IRIS-specific memory allocation issues
+• **Configuration**: Added default memory configuration parameters for consistent resource allocation
+
 ---
 
 Tempo is a computational pipeline for processing data of paired-end whole-exome (WES) and whole-genome sequencing (WGS) of human cancer samples with matched normals. Its components are containerized and the pipeline runs on the [Juno high-performance computing cluster](http://mskcchpc.org/display/CLUS/Juno+Cluster+Guide) at Memorial Sloan Kettering Cancer Center and on [Amazon Web Services (AWS)](https://aws.amazon.com). The pipeline was written by members of the [Center for Molecular Oncology](https://www.mskcc.org/research-programs/molecular-oncology).

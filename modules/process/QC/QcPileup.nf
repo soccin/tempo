@@ -10,6 +10,9 @@ process QcPileup {
   output:
     tuple val(idSample), path("${idSample}.pileup"), emit: pileupOutput
 
+  // This does not work with BAMmapping workflow is active - so skip it
+  //when: params.bamMapping==false
+
   script:
   gatkPath = "/usr/bin/GenomeAnalysisTK.jar"
   conpairPath = "/usr/bin/conpair"
@@ -28,6 +31,8 @@ process QcPileup {
     mem = (task.memory.toString().split(" ")[0].toInteger()/task.cpus).toInteger() - 1
   }
   javaMem = "${mem}g"
+
+  if(params.bamMapping==false)
   """
   ${conpairPath}/scripts/run_gatk_pileup_for_sample.py \
     --gatk=${gatkPath} \
@@ -37,4 +42,14 @@ process QcPileup {
     --xmx_java=${javaMem} \
     --outfile=${idSample}.pileup
   """
+  else
+  """
+  echo "QcPileup does not work with BAMmapping argument - so do nothing"
+  echo "bamMapping"=${params.bamMapping}
+  echo "mapping"=${params.mapping}
+  echo
+  echo TARGETS=${params.targets_base}/idt_v2/targets.bed
+  echo 
+  touch ${idSample}.pileup
+ """
 }

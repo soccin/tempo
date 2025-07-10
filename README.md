@@ -5,7 +5,9 @@
 
 Forked from mskcc/tempo develop (e136e56)
 
-### Updates 2025-07-10 (Branch: eos-devs)
+### Updates 2025-07-10 - SV caller update
+
+### Updates 2025-07-09 - WGS adjustments
 
 The eos-devs branch has changes to optimize for WGS processing and some Iris cluster specific changes. Key enhancements include conditional execution of LoH and SNV processes for exome samples to prevent slow processing on large WGS datasets, comprehensive memory allocation optimizations across QC and alignment processes, and improved BAM processing workflows with standardized memory parameters. The branch also addresses critical bug fixes for BAM mapping conditions and IRIS-specific memory allocation issues. See CHANGELOG.md for details.
 

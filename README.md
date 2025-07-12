@@ -5,7 +5,15 @@
 
 Forked from mskcc/tempo develop (e136e56)
 
-### Updates 2025-07-10 - SV caller update
+### Updates 2025-07-11 - SV caller update
+
+Update two of the SV callers (delly,svaba) and also add optimization to neo-antigen module
+
+merge (all from upstream repo [mskcc/tempo])
+- 'feature/upgrade_delly_v126' [8bcbf291]
+- 'update/svaba' [e6eedae0]
+- 'enhancement/neoantigen_parallel' [50854c1e]
+  - Note we also revert the check for `assay=="exome"` in module
 
 ### Updates 2025-07-09 - WGS adjustments
 

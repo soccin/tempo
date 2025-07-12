@@ -12,8 +12,6 @@ process RunNeoantigen {
     path("${idTumor}__${idNormal}.all_neoantigen_predictions.txt"), emit: NetMhcStatsOutput
     tuple val(idTumor), val(idNormal), val(target), path("${outputDir}/${outputPrefix}.neoantigens.maf"), emit: mafFileForMafAnno
 
-  when: params.assayType == "exome"
-
   script:
 
   if (workflow.profile == "juno") {

@@ -12,6 +12,8 @@ process SomaticRunMultiQC {
     tuple val(idTumor), val(idNormal), file("*multiqc_report*.html"), file("*multiqc_data*.zip"), emit: somatic_multiqc_report
     tuple val(idTumor), val(idNormal), file("${outPrefix}.QC_Status.txt")
 
+  when: params.assayType == "exome"
+
   script: 
   outPrefix = "${idTumor}__${idNormal}"
   if (params.assayType == "exome") {

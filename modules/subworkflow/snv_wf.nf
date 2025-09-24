@@ -19,6 +19,9 @@ workflow snv_wf
     referenceMap = params.referenceMap
     targetsMap   = params.targetsMap
 
+    // Parse tools parameter like legacy pipeline does
+    tools = params.tools ? params.tools.split(',').collect{it.trim().toLowerCase()} : []
+
     bamFiles.combine(mergedIList, by: 2)
       .map{
         item ->
@@ -74,9 +77,14 @@ workflow snv_wf
 
     hlaOutput.combine(SomaticAnnotateMaf.out.mafFile, by: [1,2]).set{ input4Neoantigen }
 
-    RunNeoantigen(input4Neoantigen, Channel.value([referenceMap.neoantigenCDNA, referenceMap.neoantigenCDS]))
-
-    facetsForMafAnno.combine(RunNeoantigen.out.mafFileForMafAnno, by: [0,1,2]).set{ facetsMafFileSomatic }
+    // Conditional neoantigen execution
+    if (tools.contains('neoantigen')) {
+      RunNeoantigen(input4Neoantigen, Channel.value([referenceMap.neoantigenCDNA, referenceMap.neoantigenCDS]))
+      facetsForMafAnno.combine(RunNeoantigen.out.mafFileForMafAnno, by: [0,1,2]).set{ facetsMafFileSomatic }
+    } else {
+      // Create dummy channel when neoantigen is disabled - use original MAF file
+      facetsForMafAnno.combine(SomaticAnnotateMaf.out.mafFile, by: [0,1,2]).set{ facetsMafFileSomatic }
+    }
 
     SomaticFacetsAnnotation(facetsMafFileSomatic)
     finalMaf4Aggregate = SomaticFacetsAnnotation.out.finalMaf4Aggregate.map { ["placeHolder"] + it }
@@ -84,6 +92,6 @@ workflow snv_wf
   emit:
     mafFile               = SomaticAnnotateMaf.out.mafFile
     maf4MetaDataParser    = SomaticFacetsAnnotation.out.maf4MetaDataParser
-    NetMhcStats4Aggregate = RunNeoantigen.out.NetMhcStats4Aggregate
+    NetMhcStats4Aggregate = tools.contains('neoantigen') ? RunNeoantigen.out.NetMhcStats4Aggregate : Channel.empty()
     finalMaf4Aggregate    = finalMaf4Aggregate
 }

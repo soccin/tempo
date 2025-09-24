@@ -50,7 +50,8 @@ workflow aggregateFromResult
 
     inputAggregate.multiMap{ cohort, idTumor, idNormal, path ->
 		  finalMaf4Aggregate: [idTumor, idNormal, cohort, "placeHolder", file(path + "/somatic/" + idTumor + "__" + idNormal + "/*/*.final.maf" )]
-      NetMhcStats4Aggregate: [idTumor, idNormal, cohort, "placeHolder", file(path + "/somatic/" + idTumor + "__" + idNormal + "/*/*.all_neoantigen_predictions.txt")]
+      NetMhcStats4Aggregate: file(path + "/somatic/" + idTumor + "__" + idNormal + "/*/*.all_neoantigen_predictions.txt").exists() ?
+        [idTumor, idNormal, cohort, "placeHolder", file(path + "/somatic/" + idTumor + "__" + idNormal + "/*/*.all_neoantigen_predictions.txt")] : []
       FacetsPurity4Aggregate: [idTumor, idNormal, cohort, "placeHolder", file(path + "/somatic/" + idTumor + "__" + idNormal + "/*/*/*/*_purity.seg")]
       FacetsHisens4Aggregate: [idTumor, idNormal, cohort, "placeHolder", file(path + "/somatic/" + idTumor + "__" + idNormal + "/*/*/*/*_hisens.seg")]
       FacetsOutLog4Aggregate: [idTumor, idNormal, cohort, "placeHolder", file(path + "/somatic/" + idTumor + "__" + idNormal + "/*/*/*_OUT.txt")]
@@ -84,7 +85,7 @@ workflow aggregateFromResult
 		.set { aggregateList }
 
     inputSomaticAggregateMaf      = aggregateList.finalMaf4Aggregate.transpose().groupTuple(by:[2])
-    inputSomaticAggregateNetMHC   = aggregateList.NetMhcStats4Aggregate.transpose().groupTuple(by:[2])
+    inputSomaticAggregateNetMHC   = aggregateList.NetMhcStats4Aggregate.filter{ it.size() > 0 }.transpose().groupTuple(by:[2])
     inputPurity4Aggregate         = aggregateList.FacetsPurity4Aggregate.transpose().groupTuple(by:[2]).map{[it[2], it[4]]}
     inputHisens4Aggregate         = aggregateList.FacetsHisens4Aggregate.transpose().groupTuple(by:[2]).map{[it[2], it[4]]}
     inputOutLog4Aggregate         = aggregateList.FacetsOutLog4Aggregate.transpose().groupTuple(by:[2]).map{[it[2], it[4]]}

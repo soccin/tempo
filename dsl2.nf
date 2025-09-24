@@ -150,7 +150,7 @@ workflow {
     }
     else
     {
-      inputBam = alignment_wf.out.RunBQSR_bamsBQSR
+      inputBam = alignment_wf.out.bam_bai
       fastPJson = alignment_wf.out.fastPJson
     }
 

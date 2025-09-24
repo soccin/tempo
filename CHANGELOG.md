@@ -1,5 +1,18 @@
 # Changelog
 
+## Branch: nds/turnOffNeoA 2025-09-24
+
+### Changed
+- **RunNeoantigen Disabled by Default**: Converted neoantigen prediction from default-enabled to opt-in only
+  - Removed "neoantigen" from default tools string in `nextflow.config`
+  - Added conditional execution logic in `modules/subworkflow/snv_wf.nf` based on tools parameter
+  - Enhanced aggregation workflows to handle empty neoantigen channels gracefully
+  - Users must now explicitly include `neoantigen` in `--tools` parameter to enable neoantigen analysis
+  - Improves performance and reliability for standard somatic variant analysis workflows
+  - Maintains full backward compatibility when neoantigen is explicitly enabled
+
+---
+
 ## Branch: eos-devs 2025-07-10
 
 ### Added

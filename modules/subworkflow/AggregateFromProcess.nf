@@ -246,6 +246,7 @@ workflow aggregateFromProcess
   }
   if (snv4Aggregate){
     SomaticAggregateMaf(inputSomaticAggregateMaf)
+    // SomaticAggregateNetMHC will only run if the channel has data (automatic with empty channel)
     SomaticAggregateNetMHC(inputSomaticAggregateNetMHC)
   }
   if (sv4Aggregate){

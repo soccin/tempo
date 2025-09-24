@@ -1,5 +1,6 @@
 tmp/
 work/
+data/
 example_data
 .*swp
 .DS_Store
@@ -25,4 +26,6 @@ results/
 *.Rhistory
 *.tsv
 docs/node_modules
+testing/
+testing*
 *.pyc

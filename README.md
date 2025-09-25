@@ -6,35 +6,26 @@
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 [![Launch on Nextflow Tower](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Nextflow%20Tower-%234256e7)](https://tower.nf/launch?pipeline=https://github.com/mskcc/tempo)
 
-## Introduction
-
 # Time-Efficient Mutational Profiling in Oncology (Tempo)
 
-## Eos-devs branch (2025-07-06)
+## Devs branch (2025-09-24)
 
-Forked from mskcc/tempo develop (e136e56)
+### Major Update - nf-core Integration with Spark Optimization
+(msk/tempo: 833d681e)
 
-### Updates 2025-07-11 - SV caller update
+This branch represents a significant modernization of the Tempo pipeline through integration of the nf-core framework and Spark-based processing optimizations.
 
-Update two of the SV callers (delly,svaba) and also add optimization to neo-antigen module
+**Key Features:**
+• **nf-core Framework**: Complete integration with nf-core standards including CI/CD workflows, testing infrastructure, and standardized configurations
+• **Spark Processing**: New GATK Spark modules for MarkDuplicates and BQSR with scatter/gather parallelization for improved performance on large datasets
+• **Neoantigen Control**: Converted neoantigen analysis from default-enabled to opt-in only, improving standard workflow performance
+• **Enhanced Documentation**: Added comprehensive Claude Code integration and updated project structure
 
-merge (all from upstream repo [mskcc/tempo])
-- 'feature/upgrade_delly_v126' [8bcbf291]
-- 'update/svaba' [e6eedae0]
-- 'enhancement/neoantigen_parallel' [50854c1e]
-  - Note we also revert the check for `assay=="exome"` in module
-
-### Updates 2025-07-09 - WGS adjustments
-
-The eos-devs branch has changes to optimize for WGS processing and some Iris cluster specific changes. Key enhancements include conditional execution of LoH and SNV processes for exome samples to prevent slow processing on large WGS datasets, comprehensive memory allocation optimizations across QC and alignment processes, and improved BAM processing workflows with standardized memory parameters. The branch also addresses critical bug fixes for BAM mapping conditions and IRIS-specific memory allocation issues. See CHANGELOG.md for details.
-
-**Summary of changes:**
-• **Performance Optimization**: Added exome-only conditions for LoH/SNV processes to prevent unnecessary slow execution on WGS samples
-• **Memory Management**: Refactored memory allocation in QcQualimap and enhanced BAM processing with standardized memory parameters
-• **Bug Fixes**: Fixed BAM mapping condition handling in QcPileup and added debugging for IRIS-specific memory allocation issues
-• **Configuration**: Added default memory configuration parameters for consistent resource allocation
+See CHANGELOG_nds.md for complete technical details.
 
 ---
+
+## Introduction
 
 Tempo is a computational pipeline for processing data of paired-end whole-exome (WES) and whole-genome sequencing (WGS) of human cancer samples with matched normals. Its components are containerized and the pipeline runs on the [Juno high-performance computing cluster](http://mskcchpc.org/display/CLUS/Juno+Cluster+Guide) at Memorial Sloan Kettering Cancer Center and on [Amazon Web Services (AWS)](https://aws.amazon.com). The pipeline was written by members of the [Center for Molecular Oncology](https://www.mskcc.org/research-programs/molecular-oncology).
 

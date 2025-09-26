@@ -1,0 +1,26 @@
+From 0a049712dd067989ca6f66613bd7931f8f1028b1 Mon Sep 17 00:00:00 2001
+From: "Nicholas D. Socci" <soccin@mskcc.org>
+Date: Sun, 6 Jul 2025 00:40:38 -0400
+Subject: [PATCH] Update MergeBamsAndMarkDuplicates process to use params value
+ `max_records_in_ram` to set argument for MarkDups
+
+---
+ modules/process/Alignment/MergeBamsAndMarkDuplicates.nf | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/modules/process/Alignment/MergeBamsAndMarkDuplicates.nf b/modules/process/Alignment/MergeBamsAndMarkDuplicates.nf
+index 1590bd07..bcbae3f1 100644
+--- a/modules/process/Alignment/MergeBamsAndMarkDuplicates.nf
++++ b/modules/process/Alignment/MergeBamsAndMarkDuplicates.nf
+@@ -38,7 +38,7 @@ process MergeBamsAndMarkDuplicates {
+   gatk MarkDuplicates \
+     ${javaOptions} \
+     --TMP_DIR ./ \
+-    --MAX_RECORDS_IN_RAM 50000 \
++    --MAX_RECORDS_IN_RAM ${params.max_records_in_ram} \
+     --INPUT ${idSample}.merged.bam \
+     --METRICS_FILE ${idSample}.bam.metrics \
+     --ASSUME_SORT_ORDER coordinate \
+-- 
+2.39.5 (Apple Git-154)
+

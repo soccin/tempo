@@ -13,3 +13,11 @@ This is version and update info for the TEMPO repo that is being used in Adagio 
 
 - git merge enhancement/separating_hlatyping_and_lohhla_wf
 - resolve conflict by keeping all code (merge) and just removing conflict marks
+
+### SV-Callers re-updates
+- git merge upstream/feature/upgrade_delly_v126
+- git merge upstream/update/svaba
+
+### Neoantigen
+- it merge upstream/enhancement/neoantigen_parallel
+

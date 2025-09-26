@@ -1,0 +1,24 @@
+From 1d10fd4bbb0a89b89bf80572e4ab4ccce2c5356e Mon Sep 17 00:00:00 2001
+From: "Nicholas D. Socci" <soccin@mskcc.org>
+Date: Sun, 6 Jul 2025 00:41:33 -0400
+Subject: [PATCH] Add default max_records_in_ram parameter to juno.config
+
+---
+ conf/juno.config | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/conf/juno.config b/conf/juno.config
+index eedc5de0..60bc6224 100644
+--- a/conf/juno.config
++++ b/conf/juno.config
+@@ -29,6 +29,7 @@ params {
+   // targets_base   = "/juno/work/ccs/resources/tempo/${params.genome}"
+   targets_base   = "${reference_base}/mskcc-igenomes/${params.genome.toLowerCase()}/tempo_targets"
+   genome_base = params.genome == 'GRCh37' ? "${reference_base}/mskcc-igenomes/igenomes/Homo_sapiens/GATK/GRCh37" : params.genome == 'GRCh38' ? "${reference_base}/mskcc-igenomes/igenomes/Homo_sapiens/GATK/GRCh38" : "${reference_base}/mskcc-igenomes/igenomes/smallGRCh37"
++  max_records_in_ram = "50000"
+   minWallTime = 3.h
+   medWallTime = 6.h
+   maxWallTime = 500.h
+-- 
+2.39.5 (Apple Git-154)
+

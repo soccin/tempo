@@ -22,8 +22,8 @@ This is version and update info for the TEMPO repo that is being used in Adagio 
 - `git merge upstream/enhancement/neoantigen_parallel`
 
 ### NDS Patches:
+- git merge patch/01-maxRecsInRam (memory optimization for markDups)
 
-Two patches to "fix" markDups memory usage
-
+Two patches to "fix" markDups memory usage:
 - `git am adagio/patches/0001-Add-default-max_records_in_ram-parameter-to-juno.con.patch`
 - `git am adagio/patches/0002-Update-MergeBamsAndMarkDuplicates-process-to-use-par.patch`

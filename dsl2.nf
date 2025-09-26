@@ -33,10 +33,12 @@ include { manta_wf }             from './modules/subworkflow/manta_wf'          
 include { msiSensor_wf }         from './modules/subworkflow/msiSensor_wf'        addParams(referenceMap: referenceMap, targetsMap: targetsMap)
 include { mutSig_wf }            from './modules/subworkflow/mutSig_wf'
 include { mdParse_wf }           from './modules/subworkflow/mdParse_wf'
-include { loh_wf }               from './modules/subworkflow/loh_wf'              addParams(referenceMap: referenceMap, targetsMap: targetsMap)
+include { hlaTyping_wf }         from './modules/subworkflow/hlaTyping_wf'        addParams(referenceMap: referenceMap, targetsMap: targetsMap)
+include { hlaLoH_wf }            from './modules/subworkflow/hlaLoH_wf'           addParams(referenceMap: referenceMap, targetsMap: targetsMap)
 include { facets_wf }            from './modules/subworkflow/facets_wf'           addParams(referenceMap: referenceMap, targetsMap: targetsMap)
 include { sv_wf }                from './modules/subworkflow/sv_wf'               addParams(referenceMap: referenceMap, targetsMap: targetsMap)
 include { snv_wf }               from './modules/subworkflow/snv_wf'              addParams(referenceMap: referenceMap, targetsMap: targetsMap)
+include { neoantigen_wf }        from './modules/subworkflow/neoantigen_wf'       addParams(referenceMap: referenceMap, targetsMap: targetsMap)
 include { sampleQC_wf }          from './modules/subworkflow/sampleQC_wf'         addParams(referenceMap: referenceMap, targetsMap: targetsMap, multiqcWesConfig: multiqcWesConfig, multiqcWgsConfig: multiqcWgsConfig, multiqcTempoLogo: multiqcTempoLogo)
 include { samplePairingQC_wf }   from './modules/subworkflow/samplePairingQC_wf'  addParams(referenceMap: referenceMap, targetsMap: targetsMap)
 include { somaticMultiQC_wf }    from './modules/subworkflow/somaticMultiQC_wf'   addParams(multiqcWesConfig: multiqcWesConfig, multiqcWgsConfig: multiqcWgsConfig, multiqcTempoLogo: multiqcTempoLogo)
@@ -57,24 +59,26 @@ WFs = params.workflows instanceof Boolean ? '' : params.workflows
 
 WFs = WFs.split(',').collect{it.trim().toLowerCase()}.unique()
 
-WFs = (!params.mapping && !params.bamMapping && aggregateParamIsFile) ? ['snv','sv','mutsig','germsnv','germsv','lohhla','facets','qc','msisensor'] : WFs
+WFs = (!params.mapping && !params.bamMapping && aggregateParamIsFile) ? ['snv','sv','mutsig','germsnv','germsv','hlatyping','hlaLoH','facets','qc','msisensor', "neoantigen"] : WFs
 
 workflow {
   //Set flags for when each pipeline is required to run.
   doWF_align           = (params.mapping) ? true : false
-  doWF_manta           = ['snv', 'sv', 'mutsig'].any(it -> it in WFs) ? true : false
-  doWF_scatter         = ['snv', 'sv', 'mutsig', 'germsnv'].any(it -> it in WFs) ? true : false
+  doWF_manta           = ['snv', 'sv', 'mutsig', 'neoantigen'].any(it -> it in WFs) ? true : false
+  doWF_scatter         = ['snv', 'sv', 'mutsig', 'germsnv', 'neoantigen'].any(it -> it in WFs) ? true : false
   doWF_germSNV         = 'germsnv' in WFs ? true : false
   doWF_germSV          = 'germsv' in WFs ? true : false
-  doWF_facets          = ['lohhla', 'facets', 'snv', 'mutsig', 'germsnv'].any(it -> it in WFs) ? true : false
+  doWF_facets          = ['hlaloh', 'facets', 'snv', 'mutsig', 'germsnv', 'neoantigen'].any(it -> it in WFs) ? true : false
   doWF_SV              = 'sv' in WFs ? true : false
   doWF_facets          = doWF_SV && params.assayType == "genome" && ["hisens","purity"].contains(params.svcnv) ? true : doWF_facets
-  doWF_loh             = ['lohhla', 'snv', 'mutsig'].any(it -> it in WFs) ? true : false
-  doWF_SNV             = ['snv', 'mutsig'].any(it -> it in WFs) ? true : false ? true : false
+  doWF_hlaTyping       = ['hlaloh', 'neoantigen', 'hlatyping'].any(it -> it in WFs) ? true : false
+  doWF_hlaLoH          = ['hlaloh', 'neoantigen'].any(it -> it in WFs) ? true : false
+  doWF_SNV             = ['snv', 'mutsig', 'neoantigen'].any(it -> it in WFs) ? true : false
+  doWF_neoantigen      = 'neoantigen' in WFs ? true : false
   doWF_QC              = 'qc' in WFs ? true : false
   doWF_msiSensor       = 'msisensor' in WFs ? true : false
   doWF_mutSig          = 'mutsig' in WFs ? true : false
-  doWF_mdParse         = (doWF_manta && doWF_scatter && doWF_facets && doWF_loh && doWF_SNV && doWF_msiSensor && doWF_mutSig) ? true : false
+  doWF_mdParse         = (doWF_facets || doWF_hlaTyping || doWF_SNV || doWF_msiSensor || doWF_mutSig) ? true : false
 
   doWF_AggregateFromResult = false
   doWF_AggregateFromProcess = false
@@ -188,15 +192,26 @@ workflow {
       germlineSNV_wf(bams, bamsTumor, scatter_wf.out.mergedIList, facets_wf.out.facetsForMafAnno)
     }
 
-    if(doWF_loh)
+    if(doWF_hlaTyping)
     {
-      loh_wf(bams, bamFiles, facets_wf.out.facetsPurity)
+      hlaTyping_wf(bams)
+    }
+
+    if(doWF_hlaLoH)
+    {
+      hlaLoH_wf(hlaTyping_wf.out.hlaOutput, bamFiles, facets_wf.out.facetsPurity)
     }
 
     if(doWF_SNV)
     {
-      snv_wf(bamFiles, scatter_wf.out.mergedIList, manta_wf.out.mantaToStrelka, loh_wf.out.hlaOutput, facets_wf.out.facetsForMafAnno)
+      snv_wf(bamFiles, scatter_wf.out.mergedIList, manta_wf.out.mantaToStrelka, facets_wf.out.facetsForMafAnno)
     }
+
+    if(doWF_neoantigen)
+    {
+      neoantigen_wf(snv_wf.out.mafFile, hlaTyping_wf.out.hlaOutput)
+    }
+
 
     if(doWF_SV)
     {
@@ -255,17 +270,15 @@ workflow {
 
     if(doWF_mdParse)
     {
-      facets_wf.out.facetsPurity.combine(snv_wf.out.maf4MetaDataParser, by: [0,1,2])
-        .combine(facets_wf.out.FacetsQC4MetaDataParser, by: [0,1,2])
-        .combine(msiSensor_wf.out.msi4MetaDataParser, by: [0,1,2])
-        .combine(mutSig_wf.out.mutSig4MetaDataParser, by: [0,1,2])
-        .combine(loh_wf.out.hlaOutput, by: [1,2])
-        .unique()
-        .map{ idNormal, target, idTumor, purityOut, mafFile, qcOutput, msifile, mutSig, placeHolder, polysolverFile ->
-        [idNormal, target, idTumor, purityOut, mafFile, qcOutput, msifile, mutSig, placeHolder, polysolverFile, targetsMap."$target".codingBed]
-      }.set{ mergedChannelMetaDataParser }
-
-      mdParse_wf(mergedChannelMetaDataParser)
+      mdParse_wf(
+        bamFiles.map { [ it[0], it[1], it[2] ] },
+        doWF_facets ? facets_wf.out.facetsPurity : bamFiles.map { [ it[0], it[1], it[2], null ] },
+        doWF_SNV ? snv_wf.out.maf4MetaDataParser : bamFiles.map { [ it[0], it[1], it[2], null ] },
+        doWF_facets ? facets_wf.out.FacetsQC4MetaDataParser : bamFiles.map { [ it[0], it[1], it[2], null ] },
+        doWF_msiSensor ? msiSensor_wf.out.msi4MetaDataParser : bamFiles.map { [ it[0], it[1], it[2], null ] },
+        doWF_mutSig ? mutSig_wf.out.mutSig4MetaDataParser : bamFiles.map { [ it[0], it[1], it[2], null ] },
+        doWF_hlaTyping ? hlaTyping_wf.out.hlaOutput : bamFiles.map { [ ["placeHolder"], it[1], it[2], null ] }
+      )
     }
 
     if(doWF_QC && params.pairing)
@@ -304,9 +317,10 @@ workflow {
         doWF_facets ? facets_wf : false,
         doWF_SV ? sv_wf : false,
         doWF_SNV ? snv_wf : false,
+        doWF_neoantigen ? neoantigen_wf : false,
         doWF_SV && doWF_SNV && params.assayType == "genome" ? hrdetect_wf : false,
         doWF_SV && doWF_SNV && params.assayType == "genome" ? clonality_wf : false,
-        doWF_loh ? loh_wf : false,
+        doWF_hlaLoH ? hlaLoH_wf : false,
         doWF_mdParse ? mdParse_wf : false,
         doWF_germSNV ? germlineSNV_wf : false,
         doWF_germSV ? germlineSV_wf : false,

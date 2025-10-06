@@ -7,12 +7,17 @@ This is version and update info for the TEMPO repo that is being used in Adagio 
 - Working branch: ccs/update-250925
 - Base commit: 833d681e
 - Base branch: nf-core/markdup_spark
-- Date: 2025-09-25
+- Date: 2025-10-06
 
 ## Updates
 
+- new profile for IRIS cluster.
 - `git merge enhancement/separating_hlatyping_and_lohhla_wf`
 - `resolve conflict by keeping all code (merge) and just removing conflict marks`
+
+
+### Iris Profile
+- `c7a3a026 feat(iris): add iris profile configuration`
 
 ### SV-Callers re-updates
 - `git merge upstream/feature/upgrade_delly_v126`

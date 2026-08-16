@@ -8,6 +8,7 @@ process GermlineRunSvABA {
     path(genomeIndex)
     path(genomeDict)
     path(bwaIndex)
+    path(svSvABAExcludeRegions)
 
     output:
     tuple val(idNormal), val(target), path("${outputPrefix}.reheader.svaba.germline.sv.vcf.gz"), path("${outputPrefix}.reheader.svaba.germline.sv.vcf.gz.tbi"), emit: SvABA4Combine
@@ -22,7 +23,8 @@ process GermlineRunSvABA {
     svaba run \\
       -t "${bamNormal}" \\
       -G "${genomeFile}" \\
-      -p "${task.cpus * 2}" \\
+      -B "${svSvABAExcludeRegions}" \\
+      -p "${task.cpus}" \\
       -I \\
       -L 6 \\
       --id-string "${outputPrefix}" \\

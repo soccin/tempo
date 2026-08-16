@@ -23,6 +23,7 @@ def defineReferenceMap() {
     'knownIndelsIndex' : checkParamReturnFile("knownIndelsIndex"),
     'msiSensorList' : checkParamReturnFile("msiSensorList"),
     'svCallingExcludeRegions' : checkParamReturnFile("svCallingExcludeRegions"),
+    'svSvABAExcludeRegions' : checkParamReturnFile("svSvABAExcludeRegions"),
     'svCallingIncludeRegions' : checkParamReturnFile("svCallingIncludeRegions"),
     'svCallingIncludeRegionsIndex' : checkParamReturnFile("svCallingIncludeRegionsIndex"),
   ]

@@ -46,7 +46,8 @@ workflow germlineSV_wf
 	  referenceMap.genomeFile,
 	  referenceMap.genomeIndex,
 	  referenceMap.genomeDict,
-	  referenceMap.bwaIndex
+	  referenceMap.bwaIndex,
+	  referenceMap.svSvABAExcludeRegions
     )
 
     GermlineDellyCombine.out

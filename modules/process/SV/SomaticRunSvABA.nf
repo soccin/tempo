@@ -23,7 +23,7 @@ process SomaticRunSvABA {
       -t "${bamTumor}" \\
       -n "${bamNormal}" \\
       -G "${genomeFile}" \\
-      -p "${task.cpus * 2}" \\
+      -p "${task.cpus}" \\
       --id-string "${outputPrefix}" \\
       ${target_param} \\
       -z

@@ -22,7 +22,7 @@ process GermlineRunSvABA {
     svaba run \\
       -t "${bamNormal}" \\
       -G "${genomeFile}" \\
-      -p "${task.cpus * 2}" \\
+      -p "${task.cpus}" \\
       -I \\
       -L 6 \\
       --id-string "${outputPrefix}" \\

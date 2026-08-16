@@ -8,6 +8,7 @@ process SomaticRunSvABA {
     path(genomeIndex)
     path(genomeDict)
     path(bwaIndex)
+    path(svSvABAExcludeRegions)
 
     output:
     tuple val(idTumor), val(idNormal), val(target), path("${outputPrefix}.reheader.svaba.somatic.sv.vcf.gz"), path("${outputPrefix}.reheader.svaba.somatic.sv.vcf.gz.tbi"), emit: SvABA4Combine
@@ -23,6 +24,7 @@ process SomaticRunSvABA {
       -t "${bamTumor}" \\
       -n "${bamNormal}" \\
       -G "${genomeFile}" \\
+      -B "${svSvABAExcludeRegions}" \\
       -p "${task.cpus}" \\
       --id-string "${outputPrefix}" \\
       ${target_param} \\

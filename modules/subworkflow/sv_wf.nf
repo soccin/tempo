@@ -49,7 +49,8 @@ workflow sv_wf
       referenceMap.genomeFile,
       referenceMap.genomeIndex,
       referenceMap.genomeDict,
-      referenceMap.bwaIndex
+      referenceMap.bwaIndex,
+      referenceMap.svSvABAExcludeRegions
     )
 
     if (params.assayType == "genome" && workflow.profile != "test") {

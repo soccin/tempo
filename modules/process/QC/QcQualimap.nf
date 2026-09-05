@@ -37,12 +37,46 @@ process QcQualimap {
     }
     task.time = task.attempt < 3 ? task.time : { params.maxWallTime }
   }
+  //
+  // --skipQualimap: emit the declared outputs without running qualimap bamqc.
+  //
+  // qualimap bamqc is structurally serial and runs 19-25h on a deep WGS BAM,
+  // then OOMs on the largest ones: BamStats.insertSizeArray retains one boxed
+  // Integer per read (~24 bytes) for the whole run and sorts it at the end
+  // purely to report a median that MultiQC recomputes for itself from
+  // insert_size_histogram.txt. Nothing in the caller path (snv, sv, facets,
+  // mutsig) consumes any of it, and QcConpair publishes its own concordance
+  // and contamination files independently of this process.
+  //
+  // The stub must be a VALID empty tar, not a touched file: all three MultiQC
+  // processes open with `tar -xzf` over *_qualimap_rawdata.tar.gz, and a
+  // zero-byte archive exits 2 and kills them. `--files-from /dev/null` gives a
+  // 45-byte archive that extracts cleanly to nothing. The html/css/images
+  // stubs exist only to satisfy the qualimapOutput declaration, which has no
+  // consumer in the DSL2 path.
+  //
+  // Downstream effect: SampleRunMultiQC and SomaticRunMultiQC still run and
+  // still carry conpair, facets and alfred content; they lose the Coverage,
+  // % Aligned, Error rate and Ins. size columns and the qualimap plots.
+  // NOTE the % Aligned criterion disappears silently from QC_Status rather
+  // than failing -- general_stats_parse.py skips absent columns and defaults
+  // sampleStatus to "pass". Conpair criteria are unaffected.
+  //
+  if (params.skipQualimap)
+  """
+  mkdir -p css images_qualimapReport
+  echo "QcQualimap skipped: params.skipQualimap = true" > css/placeholder.txt
+  echo "QcQualimap skipped: params.skipQualimap = true" > images_qualimapReport/placeholder.txt
+  echo "<html><body><p>QcQualimap was skipped (params.skipQualimap = true).</p></body></html>" > ${idSample}_qualimapReport.html
+  tar -czf ${idSample}_qualimap_rawdata.tar.gz --files-from /dev/null
+  """
+  else
   """
   qualimap bamqc \
   -bam ${bam} \
   ${gffOptions} \
   -outdir ${idSample} \
-  -nt ${ task.cpus * 2 } \
+  -nt ${ task.cpus } \
   -nw ${nw} \
   -nr ${nr} \
   --java-mem-size=${javaMem}G
